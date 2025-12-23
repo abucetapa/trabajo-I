@@ -1,0 +1,46 @@
+{
+  "coord": {
+    "lon": -5.6641,
+    "lat": 40.9656
+  },
+  "weather": [
+    {
+      "id": 802,
+      "main": "Clouds",
+      "description": "nubes dispersas",
+      "icon": "03d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 13.73,
+    "feels_like": 11.92,
+    "temp_min": 12.87,
+    "temp_max": 14.22,
+    "pressure": 1007,
+    "humidity": 29,
+    "sea_level": 1007,
+    "grnd_level": 912
+  },
+  "visibility": 9000,
+  "wind": {
+    "speed": 10.28,
+    "deg": 180,
+    "gust": 15.65
+  },
+  "clouds": {
+    "all": 40
+  },
+  "dt": 1763033423,
+  "sys": {
+    "type": 2,
+    "id": 2100069,
+    "country": "ES",
+    "sunrise": 1763017669,
+    "sunset": 1763053576
+  },
+  "timezone": 3600,
+  "id": 3111108,
+  "name": "Salamanca",
+  "cod": 200
+}
