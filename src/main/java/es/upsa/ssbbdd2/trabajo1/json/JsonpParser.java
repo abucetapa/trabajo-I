@@ -1,7 +1,7 @@
 package es.upsa.ssbbdd2.trabajo1.json;
 
 import es.upsa.ssbbdd2.trabajo1.io.JsonParser;
-import es.upsa.ssbbdd2.trabajo1.entities.*; // Importa todas las entidades
+import es.upsa.ssbbdd2.trabajo1.entities.*;
 import jakarta.json.*;
 
 import java.io.StringReader;
@@ -29,7 +29,6 @@ public class JsonpParser implements JsonParser {
                 cityBuilder.withPopulation(0);
             }
 
-            // Address
             JsonObject jsonAddress = jsonObject.getJsonObject("address");
             if (jsonAddress != null) {
                 var address = Address.builder()
@@ -43,7 +42,6 @@ public class JsonpParser implements JsonParser {
                 cityBuilder.withAddress(address);
             }
 
-            // Location
             JsonValue locValue = jsonObject.get("location");
             if (locValue != null && locValue.getValueType() == JsonValue.ValueType.OBJECT) {
                 JsonObject locObj = (JsonObject) locValue;
@@ -58,7 +56,6 @@ public class JsonpParser implements JsonParser {
                         .build());
             }
 
-            // Other names
             JsonObject otherNamesJson = jsonObject.getJsonObject("other names");
             if (otherNamesJson != null) {
                 Map<String, String> map = new HashMap<>();
@@ -87,13 +84,13 @@ public class JsonpParser implements JsonParser {
 
             JsonObject main = root.getJsonObject("main");
             if (main != null) {
-                weatherBuilder.withTemp(main.getJsonNumber("temp").doubleValue());
-                weatherBuilder.withFeelslike(main.getJsonNumber("feels_like").doubleValue());
-                weatherBuilder.withHumidity(main.getJsonNumber("humidity").doubleValue());
+                if (main.containsKey("temp")) weatherBuilder.withTemp(main.getJsonNumber("temp").doubleValue());
+                if (main.containsKey("feels_like")) weatherBuilder.withFeelslike(main.getJsonNumber("feels_like").doubleValue());
+                if (main.containsKey("humidity")) weatherBuilder.withHumidity(main.getJsonNumber("humidity").doubleValue());
             }
 
             JsonObject wind = root.getJsonObject("wind");
-            if (wind != null) {
+            if (wind != null && wind.containsKey("speed")) {
                 weatherBuilder.withWindSpeed(wind.getJsonNumber("speed").doubleValue());
             }
 
@@ -135,11 +132,11 @@ public class JsonpParser implements JsonParser {
             city.getOtherNames().forEach(otherNamesBuilder::add);
         }
 
-        JsonObjectBuilder cityBuilder = Json.createObjectBuilder()
-                .add("name", city.getName())
-                .add("population", city.getPopulation())
-                .add("address", addressBuilder)
-                .add("other names", otherNamesBuilder);
+        JsonObjectBuilder cityBuilder = Json.createObjectBuilder();
+        addIfNotNull(cityBuilder, "name", city.getName());
+        cityBuilder.add("population", city.getPopulation());
+        cityBuilder.add("address", addressBuilder);
+        cityBuilder.add("other names", otherNamesBuilder);
 
         if (city.getLocation() != null) {
             cityBuilder.add("location", Json.createArrayBuilder()
@@ -149,15 +146,18 @@ public class JsonpParser implements JsonParser {
 
         JsonObjectBuilder weatherBuilder = Json.createObjectBuilder();
         if (weather != null) {
-            weatherBuilder.add("dt", String.valueOf(weather.getDateTime()));
-            weatherBuilder.add("description", weather.getDescription());
+            if (weather.getDateTime() != null) weatherBuilder.add("dt", weather.getDateTime().toString());
+
+            addIfNotNull(weatherBuilder, "description", weather.getDescription());
+
             weatherBuilder.add("temp", weather.getTemp());
             weatherBuilder.add("feels like", weather.getFeelslike());
             weatherBuilder.add("humidity", weather.getHumidity());
             weatherBuilder.add("wind speed", weather.getWindSpeed());
             weatherBuilder.add("clouds", weather.getClouds());
-            weatherBuilder.add("sunrise", String.valueOf(weather.getSunrise()));
-            weatherBuilder.add("sunset", String.valueOf(weather.getSunset()));
+
+            if (weather.getSunrise() != null) weatherBuilder.add("sunrise", weather.getSunrise().toString());
+            if (weather.getSunset() != null) weatherBuilder.add("sunset", weather.getSunset().toString());
         }
 
         return Json.createObjectBuilder()
@@ -172,6 +172,8 @@ public class JsonpParser implements JsonParser {
     }
 
     private void addIfNotNull(JsonObjectBuilder builder, String key, String value) {
-        if (value != null) builder.add(key, value);
+        if (value != null) {
+            builder.add(key, value);
+        }
     }
 }

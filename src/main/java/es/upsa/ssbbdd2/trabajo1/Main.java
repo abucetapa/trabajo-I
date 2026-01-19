@@ -23,19 +23,15 @@ public class Main {
             Predicate<City> filter = Predicates.cityBelongsTo("Castilla y León")
                     .and(Predicates.cityHasPopulationGreaterThan(75_000));
 
-            // Instancia del Caso de Uso
             UseCase useCase = new UseCase(API_KEY);
 
-            // 1. EJECUCIÓN CON JSON-B
-            System.out.println("=== EJECUCIÓN 1: JSON-B ===");
+            System.out.println("=== EJECUCIÓN JSON-B ===");
             JsonbParser jsonbParser = new JsonbParser();
-            // Inyectamos el parser correspondiente al IO
             NdjsonIOImpl ioForJsonb = new NdjsonIOImpl(jsonbParser);
 
             useCase.execute(inputFile, filter, jsonbFile, ioForJsonb, jsonbParser);
 
-            // 2. EJECUCIÓN CON JSON-P
-            System.out.println("\n=== EJECUCIÓN 2: JSON-P ===");
+            System.out.println("\n=== EJECUCIÓN JSON-P ===");
             JsonpParser jsonpParser = new JsonpParser();
             NdjsonIOImpl ioForJsonp = new NdjsonIOImpl(jsonpParser);
 
